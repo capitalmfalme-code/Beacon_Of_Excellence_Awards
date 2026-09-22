@@ -33,4 +33,4 @@ ENV PORT=8000
 EXPOSE 8000
 
 # Run Django using Gunicorn - FIXED PROJECT NAME
-CMD ["gunicorn", "pinnacle_awards.wsgi:application", "--bind", "0.0.0.0:8000"]
+CMD ["gunicorn", "beacon_awards.wsgi:application", "--bind", "0.0.0.0:8000"]
