@@ -332,11 +332,43 @@ p { line-height: 1.6; }
 .scroll-top-btn.visible { opacity:1; visibility:visible; transform: translateY(0); }
 .scroll-top-btn:hover { background: var(--gold-deep); border-color: var(--gold-deep); }
 
-/* ===== REVEAL ===== */
-.reveal { opacity:0; transform: translateY(20px); transition: opacity .6s var(--ease-slow), transform .6s var(--ease-slow); }
-.reveal.in-view { opacity:1; transform: translateY(0); }
+/* ===== REVEAL | slides in on the way in, slides back out on the way out =====
+   Applied both to whole <section> elements (so the entire colored band —
+   background included — leaves and re-enters, not just the text inside it)
+   and to individual cards/rows inside them for a layered, cascading feel. */
+.reveal {
+  opacity: 0;
+  transform: translateY(48px);
+  transition: opacity .5s var(--ease-slow), transform .5s var(--ease-slow);
+  will-change: opacity, transform;
+}
+.reveal.in-view { opacity: 1; transform: translateY(0) translateX(0); }
+
+/* variants — slide in from the side instead of from below */
+.reveal-left { transform: translateX(-70px); }
+.reveal-left.in-view { transform: translateX(0); }
+
+.reveal-right { transform: translateX(70px); }
+.reveal-right.in-view { transform: translateX(0); }
+
+/* gentle stagger so items sitting side by side don't all move as one block */
+.story-grid > .story-item:nth-child(2),
+.nom-grid > .nom-card:nth-child(2),
+.principle-grid > .principle-col:nth-child(2) { transition-delay: .08s; }
+.story-grid > .story-item:nth-child(3),
+.nom-grid > .nom-card:nth-child(3),
+.principle-grid > .principle-col:nth-child(3) { transition-delay: .16s; }
+.story-grid > .story-item:nth-child(4) { transition-delay: .24s; }
+
+@media (max-width: 767px) {
+  /* stacked single-column on mobile — keep every slide vertical so nothing
+     enters from off-screen sideways on a narrow viewport */
+  .reveal-left, .reveal-right { transform: translateY(34px); }
+  .reveal-left.in-view, .reveal-right.in-view { transform: translateY(0); }
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .reveal, .hero-headline, .hero-sub, .hero-ctas, .hero-label, .hero-photo img, .hero-photo::after { animation:none !important; transition:none !important; opacity:1 !important; transform:none !important; }
+  .reveal, .reveal-left, .reveal-right, .hero-headline, .hero-sub, .hero-ctas, .hero-label, .hero-photo img, .hero-photo::after { animation:none !important; transition:none !important; opacity:1 !important; transform:none !important; }
 }
 </style>
 </head>
@@ -432,30 +464,30 @@ p { line-height: 1.6; }
   </div>
 
   <!-- 02 | LOOK AROUND -->
-  <section class="section" id="look-around">
+  <section class="section reveal" id="look-around">
     <div class="wrap">
       <div class="reveal">
         <span class="label">Look Around</span>
         <h2 class="h-lg mt-2">Excellence is everywhere.</h2>
         <p class="copy mt-2">It isn't always on a stage, followed by thousands, or wearing a title. Beacon exists to make it harder to overlook.</p>
       </div>
-      <div class="story-grid reveal">
-        <div class="story-item">
+      <div class="story-grid">
+        <div class="story-item reveal reveal-left">
           <div class="story-num">The Builder</div>
           <h3 class="story-title">She started with almost nothing.</h3>
           <p>A young entrepreneur creating opportunities for people around her, one decision at a time.</p>
         </div>
-        <div class="story-item">
+        <div class="story-item reveal reveal-right">
           <div class="story-num">The Teacher</div>
           <h3 class="story-title">He changed what was possible for a classroom.</h3>
           <p>Not because anyone was watching. Because someone had to care enough to try.</p>
         </div>
-        <div class="story-item">
+        <div class="story-item reveal reveal-left">
           <div class="story-num">The Creator</div>
           <h3 class="story-title">Her work became a voice for a generation.</h3>
           <p>Quietly building an audience by simply being honest.</p>
         </div>
-        <div class="story-item">
+        <div class="story-item reveal reveal-right">
           <div class="story-num">The Quiet Leader</div>
           <h3 class="story-title">No spotlight. No applause. Just results.</h3>
           <p>Showing up consistently for a community that's counting on them.</p>
@@ -465,25 +497,25 @@ p { line-height: 1.6; }
   </section>
 
   <!-- 03 | MEET THE PEOPLE -->
-  <section class="section bg-alt" id="nominees-preview">
+  <section class="section bg-alt reveal" id="nominees-preview">
     <div class="wrap">
       <div class="reveal">
         <span class="label">Nominee Stories</span>
         <h2 class="h-lg mt-2">Meet the people worth knowing.</h2>
         <p class="copy mt-2">Behind every nomination is a person building, creating, or solving something that matters.</p>
       </div>
-      <div class="nom-grid reveal">
-        <div class="nom-card">
+      <div class="nom-grid">
+        <div class="nom-card reveal reveal-left">
           <div class="nom-cat">Business &amp; Enterprise</div>
           <div class="nom-quote">The founder who turned a small idea into livelihoods.</div>
           <a href="{% url 'all_nominees' %}" class="nom-link">Read their story <i class="fas fa-arrow-right arrow"></i></a>
         </div>
-        <div class="nom-card">
+        <div class="nom-card reveal">
           <div class="nom-cat">Community Impact</div>
           <div class="nom-quote">The woman creating change where nobody thought to look.</div>
           <a href="{% url 'all_nominees' %}" class="nom-link">Read their story <i class="fas fa-arrow-right arrow"></i></a>
         </div>
-        <div class="nom-card">
+        <div class="nom-card reveal reveal-right">
           <div class="nom-cat">Innovation</div>
           <div class="nom-quote">The young builder refusing to accept that "it can't be done."</div>
           <a href="{% url 'all_nominees' %}" class="nom-link">Read their story <i class="fas fa-arrow-right arrow"></i></a>
@@ -496,24 +528,24 @@ p { line-height: 1.6; }
   </section>
 
   <!-- 04 | WHY BEACON EXISTS -->
-  <section class="section bg-ink" id="about">
+  <section class="section bg-ink reveal" id="about">
     <div class="wrap">
       <div class="reveal">
         <span class="label on-dark">Why Beacon Exists</span>
         <h2 class="h-lg mt-2" style="color:var(--on-dark);max-width:20ch;">We don't believe excellence should be reserved for the famous.</h2>
       </div>
-      <div class="principle-grid reveal">
-        <div class="principle-col">
+      <div class="principle-grid">
+        <div class="principle-col reveal reveal-left">
           <div class="principle-idx">01 · See</div>
           <h3 class="principle-head">Before recognition comes visibility.</h3>
           <p class="principle-body">We believe remarkable work should have a chance to be discovered before it becomes famous.</p>
         </div>
-        <div class="principle-col">
+        <div class="principle-col reveal">
           <div class="principle-idx">02 · Celebrate</div>
           <h3 class="principle-head">Recognition tells people: your work matters.</h3>
           <p class="principle-body">Awards aren't just trophies; they acknowledge the effort, courage and impact behind the achievement.</p>
         </div>
-        <div class="principle-col">
+        <div class="principle-col reveal reveal-right">
           <div class="principle-idx">03 · Connect</div>
           <h3 class="principle-head">The right recognition can open the next door.</h3>
           <p class="principle-body">A nomination can create conversations, relationships and communities around meaningful work.</p>
@@ -523,46 +555,46 @@ p { line-height: 1.6; }
   </section>
 
   <!-- 05 | THE BEACON JOURNEY -->
-  <section class="section" id="journey">
+  <section class="section reveal" id="journey">
     <div class="wrap">
       <div class="reveal">
         <span class="label">The Beacon Journey</span>
         <h2 class="h-lg mt-2">From being overlooked to being seen.</h2>
       </div>
-      <div class="journey-list reveal">
-        <div class="journey-row"><span class="journey-num">01</span><span><span class="journey-title">Someone notices.</span><span class="journey-desc">"People need to know about this person."</span></span></div>
-        <div class="journey-row"><span class="journey-num">02</span><span><span class="journey-title">A nomination is made.</span><span class="journey-desc">A name enters the Beacon.</span></span></div>
-        <div class="journey-row"><span class="journey-num">03</span><span><span class="journey-title">The story emerges.</span><span class="journey-desc">We look beyond the achievements on paper.</span></span></div>
-        <div class="journey-row"><span class="journey-num">04</span><span><span class="journey-title">The community responds.</span><span class="journey-desc">Recognition grows bigger together.</span></span></div>
-        <div class="journey-row"><span class="journey-num">05</span><span><span class="journey-title">The moment arrives.</span><span class="journey-desc">The Beacon of Excellence Awards.</span></span></div>
-        <div class="journey-row"><span class="journey-num">06</span><span><span class="journey-title">And then?</span><span class="journey-desc">Recognition is the beginning, not the end.</span></span></div>
+      <div class="journey-list">
+        <div class="journey-row reveal reveal-left"><span class="journey-num">01</span><span><span class="journey-title">Someone notices.</span><span class="journey-desc">"People need to know about this person."</span></span></div>
+        <div class="journey-row reveal reveal-right"><span class="journey-num">02</span><span><span class="journey-title">A nomination is made.</span><span class="journey-desc">A name enters the Beacon.</span></span></div>
+        <div class="journey-row reveal reveal-left"><span class="journey-num">03</span><span><span class="journey-title">The story emerges.</span><span class="journey-desc">We look beyond the achievements on paper.</span></span></div>
+        <div class="journey-row reveal reveal-right"><span class="journey-num">04</span><span><span class="journey-title">The community responds.</span><span class="journey-desc">Recognition grows bigger together.</span></span></div>
+        <div class="journey-row reveal reveal-left"><span class="journey-num">05</span><span><span class="journey-title">The moment arrives.</span><span class="journey-desc">The Beacon of Excellence Awards.</span></span></div>
+        <div class="journey-row reveal reveal-right"><span class="journey-num">06</span><span><span class="journey-title">And then?</span><span class="journey-desc">Recognition is the beginning, not the end.</span></span></div>
       </div>
     </div>
   </section>
 
   <!-- 06 | YOU HAVE A PLACE HERE -->
-  <section class="section bg-alt" id="nominate">
+  <section class="section bg-alt reveal" id="nominate">
     <div class="wrap">
       <div class="reveal">
         <span class="label">Get Involved</span>
         <h2 class="h-lg mt-2">You have a place here.</h2>
       </div>
-      <div class="part-list reveal">
+      <div class="part-list">
         {% if nominations_open %}
-        <a href="/nominate/" class="part-row" style="color:inherit;">
+        <a href="/nominate/" class="part-row reveal reveal-left" style="color:inherit;">
           <div class="part-title">Nominate someone<span class="sub">Know someone whose work deserves to be seen?</span></div>
           <div class="part-cta">Nominate <i class="fas fa-arrow-right arrow"></i></div>
         </a>
-        <a href="/nominate/" class="part-row" style="color:inherit;">
+        <a href="/nominate/" class="part-row reveal reveal-right" style="color:inherit;">
           <div class="part-title">Be nominated<span class="sub">Maybe the person we've been looking for is you.</span></div>
           <div class="part-cta">Tell Your Story <i class="fas fa-arrow-right arrow"></i></div>
         </a>
         {% endif %}
-        <a href="{% url 'all_nominees' %}" class="part-row" style="color:inherit;">
+        <a href="{% url 'all_nominees' %}" class="part-row reveal reveal-left" style="color:inherit;">
           <div class="part-title">View nominees<span class="sub">See who's already been recognised this edition.</span></div>
           <div class="part-cta">View Nominees <i class="fas fa-arrow-right arrow"></i></div>
         </a>
-        <a href="#partners" class="part-row" style="color:inherit;">
+        <a href="#partners" class="part-row reveal reveal-right" style="color:inherit;">
           <div class="part-title">Partner with Beacon<span class="sub">Put your organisation behind the movement.</span></div>
           <div class="part-cta">Partner <i class="fas fa-arrow-right arrow"></i></div>
         </a>
@@ -571,13 +603,13 @@ p { line-height: 1.6; }
   </section>
 
  <!-- 07 | YOUR MOMENT TO SHINE -->
-  <section class="section" id="your-moment">
+  <section class="section reveal" id="your-moment">
     <div class="wrap">
-      <div class="row g-5 align-items-center reveal">
-        <div class="col-lg-5" data-wow-delay=".1s">
+      <div class="row g-5 align-items-center">
+        <div class="col-lg-5 reveal reveal-left" data-wow-delay=".1s">
           <img src="https://www.corpsafrica.org/wp-content/uploads/2025/02/2025_01_13-VS-Mukunde-Lys-Gabriella-Featured-1.png" class="img-fluid" alt="A moment of recognition and excellence" style="border-radius:8px;width:100%;height:auto;display:block;" width="600" height="400" loading="lazy" />
         </div>
-        <div class="col-lg-7">
+        <div class="col-lg-7 reveal reveal-right">
           <span class="label">Nominations</span>
           <h2 class="h-lg mt-2">What if your work deserves to be seen?</h2>
           <p class="copy mt-2">You don't need to be famous, or need millions of followers. If you've created impact, challenged the expected, or shown consistent excellence, there may be a place for your story at Beacon.</p>
@@ -596,7 +628,7 @@ p { line-height: 1.6; }
   </section>
 
   <!-- 08 | THE BIGGER PICTURE -->
-  <section class="section bg-alt" id="bigger-picture">
+  <section class="section bg-alt reveal" id="bigger-picture">
     <div class="wrap reveal">
       <span class="label">The Bigger Picture</span>
       <h2 class="h-lg mt-2" style="max-width:22ch;">What happens when we start paying attention?</h2>
@@ -610,15 +642,15 @@ p { line-height: 1.6; }
   </section>
 
   <!-- 09 | PARTNERSHIPS -->
-  <section class="section bg-ink" id="partners">
+  <section class="section bg-ink reveal" id="partners">
     <div class="wrap">
       <div class="reveal" style="max-width:600px;">
         <span class="label on-dark">Partnerships</span>
         <h2 class="h-lg mt-2" style="color:var(--on-dark);">Help us put more people in the spotlight.</h2>
         <p class="copy mt-2" style="color:var(--on-dark-soft);">Our partners help us reach more people and give remarkable stories the attention they deserve. Together, we bring overlooked impact to the forefront and celebrate the people creating real change in their communities.</p>
       </div>
-      <div class="reveal">
-        <div class="partner-tier">
+      <div>
+        <div class="partner-tier reveal reveal-left">
           <div class="pt-name">Community Partner</div>
           <div class="pt-desc">Help us discover and celebrate real impact at the community level. Together, we bring forward the people whose work usually goes unnoticed.</div>
           <ul class="pt-benefits">
@@ -627,7 +659,7 @@ p { line-height: 1.6; }
             <li><i class="fas fa-circle"></i>Recognition in our annual impact showcase</li>
           </ul>
         </div>
-        <div class="partner-tier">
+        <div class="partner-tier reveal reveal-right">
           <div class="pt-name">Impact Partner</div>
           <div class="pt-desc">Champion a category and help celebrate excellence in your field. Your support directly elevates overlooked leaders into the spotlight.</div>
           <ul class="pt-benefits">
@@ -636,7 +668,7 @@ p { line-height: 1.6; }
             <li><i class="fas fa-circle"></i>Joint recognition as a champion of real impact</li>
           </ul>
         </div>
-        <div class="partner-tier">
+        <div class="partner-tier reveal reveal-left">
           <div class="pt-name">Title Partner</div>
           <div class="pt-desc">Stand behind the entire Beacon movement. Help us bring more unheard stories into the light and position real changemakers as the brands and leaders they deserve to be.</div>
           <ul class="pt-benefits">
@@ -653,7 +685,7 @@ p { line-height: 1.6; }
   </section>
 
   <!-- 10 | THE NIGHT -->
-  <section class="night" id="the-night">
+  <section class="night reveal" id="the-night">
     <img src="https://i.pinimg.com/1200x/7b/02/7a/7b027af343cc04bd82ec21eaed812a64.jpg" alt="A view of the awards ceremony room" loading="lazy" />
     <div class="wrap night-inner">
       <span class="label on-dark">The Beacon of Excellence Awards 2026</span>
@@ -678,7 +710,7 @@ p { line-height: 1.6; }
   </section>
 
   <!-- 11 | FINAL CTA -->
-  <section class="section final-cta" id="final-cta">
+  <section class="section final-cta reveal" id="final-cta">
     <div class="wrap reveal">
       <h2 class="h-lg">Who deserves to be seen?</h2>
       <p class="copy">Maybe it's you. Maybe it's someone you've watched build quietly for years. Tell us their story.</p>
@@ -771,11 +803,17 @@ p { line-height: 1.6; }
     });
     if (scrollBtn) scrollBtn.addEventListener('click', function () { window.scrollTo({ top: 0, behavior: 'smooth' }); });
 
+    // Sections (and the individual cards/rows inside them) slide in as they
+    // enter the viewport, and slide back out — ready to replay — the moment
+    // they leave it in either direction. We toggle the class every time
+    // instead of a one-shot "add and unobserve", and never unobserve.
     const revealTargets = document.querySelectorAll('.reveal');
     if (revealTargets.length) {
       const observer = new IntersectionObserver((entries) => {
-        entries.forEach((entry) => { if (entry.isIntersecting) entry.target.classList.add('in-view'); });
-      }, { threshold: .14, rootMargin: '0px 0px -6% 0px' });
+        entries.forEach((entry) => {
+          entry.target.classList.toggle('in-view', entry.isIntersecting);
+        });
+      }, { threshold: .14, rootMargin: '0px 0px -10% 0px' });
       revealTargets.forEach((t) => observer.observe(t));
     }
 
